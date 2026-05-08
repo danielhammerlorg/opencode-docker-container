@@ -18,6 +18,7 @@ RUN git config --global user.email "aiagent@danielhammerl.de"
 RUN git config --global credential.helper \
 '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f'
 
+RUN git config --global core.autocrlf true
 RUN git config --global --add safe.directory /home/opencode_user/project
 
 # install OpenCode (official installer)
