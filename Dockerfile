@@ -4,6 +4,11 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl ca-certificates git openssh-client sudo bash jq iputils-ping
 
+# Node.js 24 + npm via NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
+  && apt-get install -y --no-install-recommends nodejs \
+  && rm -rf /var/lib/apt/lists/*
+
 # non-root user
 RUN useradd -m -s /bin/bash opencode_user \
   && echo "opencode_user ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/opencode_user \
