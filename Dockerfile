@@ -2,7 +2,7 @@ FROM ubuntu:26.04
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  curl ca-certificates git openssh-client sudo bash jq iputils-ping ripgrep
+  curl ca-certificates git openssh-client sudo bash jq iputils-ping ripgrep python3 python3-pip openjdk-8-jdk
 
 # Node.js 24 + npm via NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_24.x | bash - \
