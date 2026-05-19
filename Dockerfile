@@ -1,6 +1,8 @@
 FROM ubuntu:26.04
 ENV DEBIAN_FRONTEND=noninteractive
 
+ARG CACHE_DATE=2026-05-19
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl ca-certificates git openssh-client sudo bash jq iputils-ping ripgrep python3 python3-pip openjdk-8-jdk
 
