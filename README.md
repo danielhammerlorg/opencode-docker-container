@@ -39,6 +39,7 @@ echo 'alias oc="docker run --rm -it \
   -v \"$HOME/.config/opencode:/home/opencode_user/.config/opencode\" \
   -w /home/opencode_user/project \
   -e GITHUB_TOKEN=<token> \
+  -e TERM=$TERM \
   opencode-dhammerl"' >> ~/.zshrc
 ```
 

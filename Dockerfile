@@ -1,7 +1,7 @@
 FROM ubuntu:26.04
 ENV DEBIAN_FRONTEND=noninteractive
 
-ARG CACHE_DATE=2026-07-12
+ARG CACHE_DATE=2026-10-01
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
   curl ca-certificates git openssh-client sudo bash jq iputils-ping ripgrep python3 python3-pip openjdk-8-jdk
@@ -27,6 +27,10 @@ RUN git config --global credential.helper \
 
 RUN git config --global core.autocrlf true
 RUN git config --global --add safe.directory /home/opencode_user/project
+
+# Rust
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+ENV PATH=/home/opencode_user/.cargo/bin:$PATH
 
 # install OpenCode (official installer)
 RUN curl -fsSL https://opencode.ai/install | bash
