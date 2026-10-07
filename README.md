@@ -10,40 +10,67 @@ docker build -t opencode-dhammerl .
 
 **Windows (PowerShell):**
 ```powershell
-notepad $PROFILE
-```
-(oder `code $PROFILE` / `vim $PROFILE`). Erstelle die Datei falls sie nicht existiert.
-
-```powershell
 function oc {
     param(
         [Parameter(ValueFromRemainingArguments = $true)]
         $args
     )
+    if ((Resolve-Path).Path -eq $HOME -or (Resolve-Path).Path -eq "$HOME\Documents" -or (Resolve-Path).Path -eq "$HOME\Desktop") {
+        Write-Error "Abbruch: oc darf nicht in ~, ~/Documents oder ~/Desktop ausgeführt werden."
+        return
+    }
     $project = (Get-Location).Path
     docker run --rm -it `
         -v "${project}:/home/opencode_user/project" `
         -v "$HOME\.config\opencode:/home/opencode_user/.config/opencode" `
         -w /home/opencode_user/project `
-        -e GITHUB_TOKEN=<token> `
+        -e GITHUB_TOKEN $env:GITHUB_TOKEN `
         opencode-dhammerl @args
 }
 ```
 
-Replace `<token>` with a GitHub token. Reload profile: `. $PROFILE`
+Füge vor dem Start von `oc` die Variable in deiner Shell hinzu, z. B.:
+
+**Windows PowerShell:**
+```powershell
+$env:GITHUB_TOKEN="dein_token_hier"
+```
+oder in der Datei `$PROFILE`. Reload profile: `. $PROFILE`
+
+macOS:
 
 **macOS (zsh):**
-```zsh
-echo 'alias oc="docker run --rm -it \
-  -v \"$PWD:/home/opencode_user/project\" \
+echo 'oc() {
+  case "$PWD" in
+    "$HOME") echo "Abbruch: oc darf nicht in ~, ~/Documents oder ~/Desktop ausgeführt werden." >&2; return 1 ;;
+    "$HOME/Documents") echo "Abbruch: oc darf nicht in ~, ~/Documents oder ~/Desktop ausgeführt werden." >&2; return 1 ;;
+    "$HOME/Desktop") echo "Abbruch: oc darf nicht in ~, ~/Documents oder ~/Desktop ausgeführt werden." >&2; return 1 ;;
+  esac
+  docker run --rm -it \
+  -v "$PWD:/home/opencode_user/project" \
+  --network container:opencode-firewall \
+  --cap-drop ALL \
+  --security-opt no-new-privileges \
   -v \"$HOME/.config/opencode:/home/opencode_user/.config/opencode\" \
+  -v \"$HOME/.local/share/opencode:/home/opencode_user/.local/share/opencode\" \
+  -v \"$HOME/.local/state/opencode:/home/opencode_user/.local/state/opencode\" \
+  -v \"$HOME/.config/opencode:/home/opencode_user/.config/opencode\" \
+  -v \"$HOME/.cache/opencode:/home/opencode_user/.cache/opencode\" \
   -w /home/opencode_user/project \
-  -e GITHUB_TOKEN=<token> \
+  -e GITHUB_TOKEN=${GITHUB_TOKEN} \
   -e TERM=$TERM \
-  opencode-dhammerl"' >> ~/.zshrc
+  opencode-dhammerl
+}' >> ~/.zshrc
 ```
 
-Replace `<token>` with a GitHub token. Reload profile: `source ~/.zshrc`
+Reload profile: `source ~/.zshrc`
+
+Füge vor dem Start von `oc` die Variable in deiner Shell hinzu, z. B.:
+
+**macOS zsh:**
+```zsh
+export GITHUB_TOKEN="dein_token_hier"
+```
 
 ### 3. Config aus eigenem Repo symlinken (empfohlen)
 
